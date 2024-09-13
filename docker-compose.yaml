@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  hub-cluster:
+    container_name: hub-cluster
+    image: rancher/k3s:v1.24.10-k3s1
+    command: server
+    hostname: hub-cluster
+    privileged: true
+    ports:
+      - "6443:6443"
+  managed-cluster-1:
+    container_name: managed-cluster-1
+    image: rancher/k3s:v1.24.10-k3s1
+    command: server
+    hostname: managed-cluster-1
+    privileged: true
+    ports:
+      - "6444:6443"

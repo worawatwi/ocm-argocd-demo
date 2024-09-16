@@ -1,18 +1,67 @@
 version: "3.9"
 services:
-  hub-cluster:
-    container_name: hub-cluster
+  hub:
+    container_name: hub
     image: rancher/k3s:v1.24.10-k3s1
     command: server
-    hostname: hub-cluster
+    tmpfs:
+      - /run
+      - /var/run
+    hostname: hub
     privileged: true
+    environment:
+      - K3S_KUBECONFIG_MODE=666
+    volumes:
+      - k3s-hub:/var/lib/rancher/k3s
     ports:
       - "6443:6443"
-  managed-cluster-1:
-    container_name: managed-cluster-1
+  cluster-1:
+    container_name: cluster-1
     image: rancher/k3s:v1.24.10-k3s1
     command: server
-    hostname: managed-cluster-1
+    tmpfs:
+      - /run
+      - /var/run
+    hostname: cluster-1
     privileged: true
+    environment:
+      - K3S_KUBECONFIG_MODE=666
+    volumes:
+      - k3s-cluster-1:/var/lib/rancher/k3s
     ports:
       - "6444:6443"
+  cluster-2:
+    container_name: cluster-2
+    image: rancher/k3s:v1.24.10-k3s1
+    command: server
+    tmpfs:
+      - /run
+      - /var/run
+    hostname: cluster-2
+    privileged: true
+    environment:
+      - K3S_KUBECONFIG_MODE=666
+    volumes:
+      - k3s-cluster-2:/var/lib/rancher/k3s
+    ports:
+      - "6445:6443"
+  # cluster-3:
+  #   container_name: cluster-3
+  #   image: rancher/k3s:v1.24.10-k3s1
+  #   command: server
+  #   tmpfs:
+  #     - /run
+  #     - /var/run
+  #   hostname: cluster-3
+  #   privileged: true
+  #   environment:
+  #     - K3S_KUBECONFIG_MODE=666
+  #   volumes:
+  #     - k3s-cluster-3:/var/lib/rancher/k3s
+  #   ports:
+  #     - "6446:6443"
+volumes:
+  k3s-hub: {}
+  k3s-cluster-1: {}
+  k3s-cluster-2: {}
+  # k3s-cluster-3: {}

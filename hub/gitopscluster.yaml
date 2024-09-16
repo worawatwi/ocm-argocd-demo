@@ -1,0 +1,16 @@
+---
+apiVersion: apps.open-cluster-management.io/v1beta1
+kind: GitOpsCluster
+metadata:
+  name: argo-acm-importer
+  namespace: argocd
+spec:
+  createBlankClusterSecrets: true
+  argoServer:
+    cluster: notused
+    argoNamespace: argocd
+  placementRef:
+    kind: Placement
+    apiVersion: cluster.open-cluster-management.io/v1beta1
+    name: all-managed-clusters
+    namespace: argocd

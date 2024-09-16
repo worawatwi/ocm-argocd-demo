@@ -5,7 +5,7 @@
 - clusteradm
 - argocd
 
-## Bootstrap hub
+## Bootstrap Hub Cluster
 
 Start hub cluster and managed cluster containers:
 ```
@@ -31,7 +31,7 @@ kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-Install [multicloud-integrations](https://github.com/open-cluster-management-io/multicloud-integrations?tab=readme-ov-file#quick-start).
+Install [multicloud-integrations](https://github.com/open-cluster-management-io/multicloud-integrations?tab=readme-ov-file#quick-start) (only crds and controller).
 
 
 Install the pull controller:
@@ -43,7 +43,7 @@ kubectl apply -f https://raw.githubusercontent.com/open-cluster-management-io/ar
 kubectl apply -f hub
 ```
 
-## Register managed cluster
+## Register Managed Cluster
 
 Retrieve hub token
 ```
@@ -87,3 +87,24 @@ Deploy ApplicationSets on hub cluster:
 ```
 kubectl apply -f appsets
 ```
+
+Access ArgoCD dashboard:
+
+```
+kubectl port-forward svc/argocd-server -n argocd 8443:443
+```
+
+## Automated Upgrade Cluster
+
+Install system-upgrade-controller and crds:
+```
+kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/latest/download/system-upgrade-controller.yaml
+kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/latest/download/crd.yaml
+```
+
+## References
+
+https://www.redhat.com/en/blog/introducing-the-argo-cd-application-pull-controller-for-open-cluster-management
+https://github.com/open-cluster-management-io/argocd-pull-integration
+https://github.com/open-cluster-management-io/multicloud-integrations
+https://github.com/open-cluster-management-io

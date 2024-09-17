@@ -1,9 +1,27 @@
 # Example OCM ArgoCD
 
+## Architecture
+
+![Architecture](./docs/architecture.png "Architecture")
+
 ## Prerequisites
 
+- docker
+- kubectl
 - clusteradm
 - argocd
+
+## Installation
+
+Install clusteradm CLI tool:
+```
+curl -L https://raw.githubusercontent.com/open-cluster-management-io/clusteradm/main/install.sh | bash
+```
+
+Install ArgoCD CLI
+```
+brew install argocd
+```
 
 ## Bootstrap Hub Cluster
 

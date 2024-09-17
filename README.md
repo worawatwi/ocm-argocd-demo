@@ -38,6 +38,7 @@ docker exec cluster-1 cat /etc/rancher/k3s/k3s.yaml > ~/.kube/k3s-cluster-1.conf
 
 Bootstrap OCM hub cluster manager:
 ```
+export KUBECONFIG=~/.kube/k3s-hub.config
 clusteradm init --wait
 ```
 This will print command to register a managed server.
@@ -63,12 +64,14 @@ kubectl apply -f hub
 
 ## Register Managed Cluster
 
-Retrieve hub token
+Retrieve token from the hub cluster
 ```
 clusteradm get token
 ```
 
+Open another terminal and run the following command to join managed cluster to the hub cluster.
 ```
+export KUBECONFIG=~/.kube/k3s-cluster-1.config
 clusteradm join --hub-token <hub_token> --hub-apiserver <hub_apiserver_url> --wait --cluster-name cluster-1
 ```
 
@@ -87,7 +90,7 @@ NAME        HUB ACCEPTED   MANAGED CLUSTER URLS   JOINED   AVAILABLE   AGE
 cluster-1   true                                  True     True        2m1s
 ```
 
-Install ArgoCD
+Install ArgoCD on the managed cluster:
 
 ```
 kubectl create namespace argocd
@@ -100,7 +103,7 @@ kubectl apply -f managed
 
 ## Deploy ApplicationSets
 
-Deploy ApplicationSets on hub cluster:
+Deploy ApplicationSets on the hub cluster:
 
 ```
 kubectl apply -f appsets
@@ -110,15 +113,10 @@ Access ArgoCD dashboard:
 
 ```
 kubectl port-forward svc/argocd-server -n argocd 8443:443
+open https://localhost:8443
 ```
 
-## Automated Upgrade Cluster
-
-Install system-upgrade-controller and crds:
-```
-kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/latest/download/system-upgrade-controller.yaml
-kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/latest/download/crd.yaml
-```
+![Argo Applications](./docs/argo_apps.png "Argo Applications")
 
 ## References
 

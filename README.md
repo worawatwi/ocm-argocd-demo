@@ -25,62 +25,63 @@ brew install argocd
 
 ## Bootstrap Hub Cluster
 
-Start hub cluster and managed cluster containers:
+1. Start hub cluster and managed cluster containers:
 ```
 docker compose up -d
 ```
 
-Get kube config files:
+2. Get kube config files:
 ```
 docker exec hub cat /etc/rancher/k3s/k3s.yaml > ~/.kube/k3s-hub.config
 docker exec cluster-1 cat /etc/rancher/k3s/k3s.yaml > ~/.kube/k3s-cluster-1.config
 ```
 
-Bootstrap OCM hub cluster manager:
+3. Bootstrap OCM hub cluster manager:
 ```
 export KUBECONFIG=~/.kube/k3s-hub.config
 clusteradm init --wait
 ```
 This will print command to register a managed server.
 
-Install ArgoCD
+4. Install ArgoCD
 
 ```
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-Install [multicloud-integrations](https://github.com/open-cluster-management-io/multicloud-integrations?tab=readme-ov-file#quick-start) (only crds and controller).
+5. Install [multicloud-integrations](https://github.com/open-cluster-management-io/multicloud-integrations?tab=readme-ov-file#quick-start) (only crds and controller).
 
 
-Install the pull controller:
+6. Install Argocd pull controller:
 ```
 kubectl apply -f https://raw.githubusercontent.com/open-cluster-management-io/argocd-pull-integration/main/deploy/install.yaml
 ```
 
+7. Apply required resources:
 ```
 kubectl apply -f hub
 ```
 
 ## Register Managed Cluster
 
-Retrieve token from the hub cluster
+1. Retrieve token from the hub cluster
 ```
 clusteradm get token
 ```
 
-Open another terminal and run the following command to join managed cluster to the hub cluster.
+2. Open another terminal and run the following command to join managed cluster to the hub cluster.
 ```
 export KUBECONFIG=~/.kube/k3s-cluster-1.config
 clusteradm join --hub-token <hub_token> --hub-apiserver <hub_apiserver_url> --wait --cluster-name cluster-1
 ```
 
-On the hub cluster, accept the join request.
+3. On the hub cluster, accept the join request.
 ```
 clusteradm accept --clusters cluster-1
 ```
 
-Verify the managed cluster was created successfully:
+4. Verify the managed cluster was created successfully:
 ```
 kubectl get managedcluster
 ```
@@ -90,15 +91,25 @@ NAME        HUB ACCEPTED   MANAGED CLUSTER URLS   JOINED   AVAILABLE   AGE
 cluster-1   true                                  True     True        2m1s
 ```
 
-Install ArgoCD on the managed cluster:
+5. Install ArgoCD on the managed cluster:
 
 ```
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
+6. Apply cluster role and role binding:
 ```
 kubectl apply -f managed
+```
+
+Repeat step 2 to 6 for cluster-2.
+
+7. The `guestbook-app-placement` will match any clusters that have the label `purpose=demo`. We need to apply the label to cluster-1 and cluster-2.
+
+```
+kubectl label --overwrite managedcluster cluster-1 purpose=demo
+kubectl label --overwrite managedcluster cluster-2 purpose=demo
 ```
 
 ## Deploy ApplicationSets

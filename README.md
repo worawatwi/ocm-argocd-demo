@@ -122,7 +122,7 @@ kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/l
 
 ## References
 
-https://www.redhat.com/en/blog/introducing-the-argo-cd-application-pull-controller-for-open-cluster-management
-https://github.com/open-cluster-management-io/argocd-pull-integration
-https://github.com/open-cluster-management-io/multicloud-integrations
-https://github.com/open-cluster-management-io
+- https://www.redhat.com/en/blog/introducing-the-argo-cd-application-pull-controller-for-open-cluster-management
+- https://github.com/open-cluster-management-io/argocd-pull-integration
+- https://github.com/open-cluster-management-io/multicloud-integrations
+- https://github.com/open-cluster-management-io

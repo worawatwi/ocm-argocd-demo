@@ -112,12 +112,33 @@ kubectl label --overwrite managedcluster cluster-1 purpose=demo
 kubectl label --overwrite managedcluster cluster-2 purpose=demo
 ```
 
+8. Verify that the placement decisions contain both cluster-1 and cluster-2
+
+```
+$ kubectl get placementdecision guestbook-app-placement-decision-1 -n argocd -o json | jq '.status.decisions.[].clusterName'
+"cluster-1"
+"cluster-2"
+```
+
 ## Deploy ApplicationSets
 
 Deploy ApplicationSets on the hub cluster:
 
 ```
 kubectl apply -f appsets
+```
+
+Verify that manifest work was created in cluster-1 and cluster-2 namespace.
+```
+$ kubectl get manifestwork -n cluster-1
+NAME                            AGE
+cluster-1-guestbook-app-a1203   5m47s
+```
+
+```
+$ kubectl get manifestwork -n cluster-2
+NAME                            AGE
+cluster-2-guestbook-app-c443d   6m37s
 ```
 
 Access ArgoCD dashboard:
@@ -127,7 +148,25 @@ kubectl port-forward svc/argocd-server -n argocd 8443:443
 open https://localhost:8443
 ```
 
+The dashboard will show `cluster-1-guestbook-app` and `cluster-2-guestbook-app` which are the application synced to cluster-1 and cluster-2.
+
 ![Argo Applications](./docs/argo_apps.png "Argo Applications")
+
+On the managed cluster-1, verify that guestbook application was exist in argocd namespace:
+
+```
+$ kubectl get application -n argocd
+NAME                      SYNC STATUS   HEALTH STATUS
+cluster-1-guestbook-app   Synced        Healthy
+```
+
+Verify that guestbook deployment has been deployed.
+
+```
+$ kubectl get deployment -n guestbook
+NAME           READY   UP-TO-DATE   AVAILABLE   AGE
+guestbook-ui   1/1     1            1           42h
+```
 
 ## References
 
